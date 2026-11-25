@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Forest Log Viewer</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
+  pre { background:#fff; border:1px solid #ddd; padding:10px; max-height:80vh; overflow:auto; }
+  #time { font-weight: bold; }
+</style>
+</head>
+<body>
+<h2>Forest Log Viewer (room_history_report.txt)</h2>
+<p>Current time: <span id="time"></span></p>
+<label for="siteSelect">Select site:</label>
+<select id="siteSelect">
+  <option value="수락휴">수락휴</option>
+  <option value="무의도">무의도</option>
+  <option value="용인자연휴양림">용인자연휴양림</option>
+</select>
+<pre id="log">Loading...</pre>
+<script>
+  // Update current time every second
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('time').textContent = now.toLocaleString();
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  const BASE_URL = "https://raw.githubusercontent.com/matrix1970/forest/main"; // change if repo/branch differs
+  const logEl = document.getElementById('log');
+  const selectEl = document.getElementById('siteSelect');
+
+  async function fetchLog() {
+    const site = encodeURIComponent(selectEl.value);
+    const url = `${BASE_URL}/${site}/room_history_report.txt`;
+    try {
+      const resp = await fetch(url, {cache: 'no-store'});
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      const lines = text.trim().split(/\r?\n/);
+      const last10 = lines.slice(-10).join('\n');
+      logEl.textContent = last10;
+    } catch (e) {
+      logEl.textContent = `Error loading log for ${site}: ${e}`;
+    }
+  }
+
+  // Initial load and refresh every 5 minutes (300,000 ms)
+  selectEl.addEventListener('change', fetchLog);
+  fetchLog();
+  setInterval(fetchLog, 300000);
+</script>
+</body>
+</html>

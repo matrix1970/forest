@@ -1,0 +1,2 @@
+Sample reservation data for web report test.
+Generated at: 2026-11-25 15:16:00
