@@ -145,7 +145,7 @@ def git_commit_and_push(site, txt_path, html_path):
         subprocess.run([git_cmd, "-C", GIT_LOCAL_PATH, "add", "."], check=True)
         commit_msg = f"Update {site} report {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         subprocess.run([git_cmd, "-C", GIT_LOCAL_PATH, "commit", "-m", commit_msg], check=True)
-        subprocess.run([git_cmd, "-C", GIT_LOCAL_PATH, "push", "origin", "main"], check=True)
+        subprocess.run([git_cmd, "-C", GIT_LOCAL_PATH, "push", "--force-with-lease", "origin", "main"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Git 작업 오류: {e}")
     except Exception as e:
