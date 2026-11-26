@@ -7,8 +7,8 @@
   body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
   pre { background:#fff; border:1px solid #ddd; padding:10px; max-height:80vh; overflow:auto; }
   #time { font-weight: bold; }
-  .container { display:flex; gap:10px; }
-  .panel { flex:1; }
+  .container { display:flex; flex-direction: column; gap:10px; }
+  .panel { width:100%; }
 </style>
 </head>
 <body>
@@ -34,7 +34,19 @@
   updateTime();
   const BASE_URL="https://raw.githubusercontent.com/matrix1970/forest/main";
   const sites=['수락휴','무의도','용인자연휴양림'];
-  async function fetchLog(site){const url=`${BASE_URL}/${encodeURIComponent(site)}/room_history_report.txt`;try{const resp=await fetch(url,{cache:'no-store'});if(!resp.ok)throw new Error(`HTTP ${resp.status}`);const text=await resp.text();const lines=text.trim().split(/\r?\n/);const last10=lines.slice(-10).join('\n');document.getElementById(`log-${site}`).textContent=last10;}catch(e){document.getElementById(`log-${site}`).textContent=`Error loading log for ${site}: ${e}`;}}
+  async function fetchLog(site){
+    const url=`${BASE_URL}/${encodeURIComponent(site)}/room_history_report.txt`;
+    try{
+      const resp=await fetch(url,{cache:'no-store'});
+      if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
+      const text=await resp.text();
+      const lines=text.trim().split(/\r?\n/);
+      const last10=lines.slice(-10).join('\n');
+      document.getElementById(`log-${site}`).textContent=last10;
+    }catch(e){
+      document.getElementById(`log-${site}`).textContent=`Error loading log for ${site}: ${e}`;
+    }
+  }
   function refreshAll(){sites.forEach(fetchLog);}
   refreshAll();
   setInterval(refreshAll,300000);
